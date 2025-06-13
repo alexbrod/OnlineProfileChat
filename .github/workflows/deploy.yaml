@@ -9,13 +9,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout GitHub repository
         uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
       - name: Install uv
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -24,18 +25,22 @@ jobs:
         run: |
           uv sync
 
-      - name: Create .env file
-        run: |
-          cat << EOF > .env
-          OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
-          GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}
-          PUSHOVER_USER=${{ secrets.PUSHOVER_USER }}
-          PUSHOVER_TOKEN=${{ secrets.PUSHOVER_TOKEN }}
-          HF_TOKEN=${{ secrets.HF_TOKEN }}
-          EOF
-
-      - name: Deploy to Hugging Face
+      - name: Clone Hugging Face Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          uv run gradio deploy
+          git clone https://AlexBrod:${HF_TOKEN}@huggingface.co/spaces/AlexBrod/career_conversation space
+
+      - name: Overwrite Space contents with GitHub repo
+        run: |
+          rm -rf space/*
+          rsync -av --exclude=.git ./ space/
+
+      - name: Commit and push to Hugging Face Space
+        run: |
+          cd space
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git add .
+          git commit -m "Deploy from GitHub repo" || echo "Nothing to commit"
+          git push
