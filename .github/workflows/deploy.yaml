@@ -38,4 +38,4 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          uv run gradio deploy --app-dir . --repo-id AlexBrod/career_conversation
+          uv run gradio deploy --app-file app.py --repo-id AlexBrod/career_conversation --token $HF_TOKEN
