@@ -33,7 +33,6 @@ jobs:
 
       - name: Overwrite Space contents with GitHub repo
         run: |
-          rm -rf space/*
           rsync -av --exclude=.git ./ space/
 
       - name: Commit and push to Hugging Face Space
