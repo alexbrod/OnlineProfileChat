@@ -29,7 +29,7 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git clone https://AlexBrod:${HF_TOKEN}@huggingface.co/spaces/AlexBrod/career_conversation space
+          git clone https://AlexBrod:${HF_TOKEN}@huggingface.co/spaces/AlexBrod/OnlineProfileChat space
 
       - name: Overwrite Space contents with GitHub repo
         run: |
